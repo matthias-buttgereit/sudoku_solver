@@ -1,5 +1,6 @@
 use std::{collections::HashMap, time::Instant};
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct Sudoku {
     board: Vec<Vec<u8>>,
 }
@@ -63,6 +64,20 @@ impl Sudoku {
         Sudoku {
             board: vec![vec![0; 9]; 9],
         }
+    }
+
+    pub fn from_string(string: &str) -> Self {
+        let mut sudoku = Self::new();
+
+        for (x, line) in string.lines().enumerate() {
+            for (y, number) in line.chars().enumerate() {
+                let number = number.to_digit(10).expect("Invalid number in String.") as u8;
+
+                sudoku.set_value(x, y, number);
+            }
+        }
+
+        sudoku
     }
 
     pub fn print(&self) {
@@ -240,5 +255,21 @@ mod tests {
         sudoku.solve();
 
         sudoku.print();
+    }
+
+    #[test]
+    fn create_sudoku_from_string() {
+        let str_sudoku = Sudoku::from_string("1");
+        let mut sudoku = Sudoku::new();
+        sudoku.set_value(0, 0, 1);
+
+        assert_eq!(str_sudoku, sudoku);
+    }
+
+    #[test]
+    #[should_panic]
+    fn create_sudoku_from_string_with_too_high_value() {
+        let str_sudoku = Sudoku::from_string("19");
+        
     }
 }
